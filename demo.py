@@ -73,7 +73,7 @@ def main(args):
         if args.isPose or args.isShow:
             # estimate pose
             camera_matrix, pose = estimate_pose(vertices)
-            output = open(os.path.join(save_folder, name + '_pose.txt'), 'w')
+            output = open(os.path.join(save_folder, name + '_.pos'), 'w')
             output.write('%.5f,'%pose[0])
             output.write('%.5f,'%pose[1])
             output.write('%.5f'%pose[2])
