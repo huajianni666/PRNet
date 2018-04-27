@@ -37,7 +37,7 @@ def matrix2angle(R):
             x = -np.pi/2
             y = -z + atan2(-R[0,1], -R[0,2])
 
-    return x, y, z
+    return y/np.pi*180, x/np.pi*180, z/np.pi*180
 
 
 def P2sRt(P):

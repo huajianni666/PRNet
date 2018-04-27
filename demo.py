@@ -21,7 +21,6 @@ def main(args):
         from utils.estimate_pose import estimate_pose
     elif args.is3d:
         from utils.write import write_obj
-    elif args.isPose:
         from utils.estimate_pose import estimate_pose
 
     # ---- init PRN
@@ -34,7 +33,7 @@ def main(args):
     if not os.path.exists(save_folder):
         os.mkdir(save_folder)
 
-    types = ('*.jpg', '*.png')
+    types = ('*.jpg', '*.png','*.jpeg')
     image_path_list= []
     for files in types:
         image_path_list.extend(glob(os.path.join(image_folder, files)))
@@ -64,7 +63,7 @@ def main(args):
             vertices = prn.get_vertices(pos)
             # corresponding colors
             colors = prn.get_colors(image, vertices)
-            write_obj(os.path.join(save_folder, name + '.obj'), vertices, colors, prn.triangles) #save 3d face(can open with meshlab)
+            #write_obj(os.path.join(save_folder, name + '.obj'), vertices, colors, prn.triangles) #save 3d face(can open with meshlab)
 
         if args.isKpt or args.isShow:
             # get landmarks
@@ -74,13 +73,18 @@ def main(args):
         if args.isPose or args.isShow:
             # estimate pose
             camera_matrix, pose = estimate_pose(vertices)
-            np.savetxt(os.path.join(save_folder, name + '_pose.txt'), pose) 
-
+            output = open(os.path.join(save_folder, name + '_pose.txt'), 'w')
+            output.write('%.5f,'%pose[0])
+            output.write('%.5f,'%pose[1])
+            output.write('%.5f'%pose[2])
+            output.close()
+            #np.savetxt(os.path.join(save_folder, name + '_pose.txt'), '%.f,%.f,%.f'%(pose[0],pose[1],pose[2]))
+            print pose
         if args.isShow:
             # ---------- Plot
             image_pose = plot_pose_box(image, camera_matrix, kpt)
-            cv2.imshow('sparse alignment', plot_kpt(image, kpt))
-            cv2.imshow('dense alignment', plot_vertices(image, vertices))
+            #cv2.imshow('sparse alignment', plot_kpt(image, kpt))
+            #cv2.imshow('dense alignment', plot_vertices(image, vertices))
             cv2.imshow('pose', plot_pose_box(image, camera_matrix, kpt))
             cv2.waitKey(0)
 
@@ -94,17 +98,17 @@ if __name__ == '__main__':
                         help='path to the output directory, where results(obj,txt files) will be stored.')
     parser.add_argument('--gpu', default='0', type=str, 
                         help='set gpu id, -1 for CPU')
-    parser.add_argument('--isDlib', default=True, type=ast.literal_eval, 
+    parser.add_argument('--isDlib', default=False, type=ast.literal_eval, 
                         help='whether to use dlib for detecting face, default is True, if False, the input image should be cropped in advance')
     parser.add_argument('--isOpencv', default=False, type=ast.literal_eval, 
                         help='whether to use opencv')
-    parser.add_argument('--is3d', default=True, type=ast.literal_eval, 
+    parser.add_argument('--is3d', default=True, type=ast.literal_eval,
                         help='whether to output 3D face(.obj)')
-    parser.add_argument('--isKpt', default=False, type=ast.literal_eval,  
+    parser.add_argument('--isKpt', default=False, type=ast.literal_eval,
                         help='whether to output key points(.txt)')
-    parser.add_argument('--isPose', default=False, type=ast.literal_eval,  
+    parser.add_argument('--isPose', default=True, type=ast.literal_eval,  
                         help='whether to output estimated pose(.txt)')
-    parser.add_argument('--isShow', default=False, type=ast.literal_eval,  
+    parser.add_argument('--isShow', default=False, type=ast.literal_eval,
                         help='whether to show the results with opencv(need opencv)')
 
     main(parser.parse_args())
