@@ -20,9 +20,10 @@ def main(args):
         from utils.write import write_obj
         from utils.estimate_pose import estimate_pose
     elif args.is3d:
+        import cv2
         from utils.write import write_obj
         from utils.estimate_pose import estimate_pose
-
+        from utils.cv_plot import plot_kpt, plot_vertices, plot_pose_box
     # ---- init PRN
     os.environ['CUDA_VISIBLE_DEVICES'] = args.gpu # GPU number, -1 for CPU
     prn = PRN(is_dlib = args.isDlib, is_opencv = args.isOpencv) 
@@ -68,7 +69,7 @@ def main(args):
         if args.isKpt or args.isShow:
             # get landmarks
             kpt = prn.get_landmarks(pos)
-            np.savetxt(os.path.join(save_folder, name + '_kpt.txt'), kpt) 
+           # np.savetxt(os.path.join(save_folder, name + '_kpt.txt'), kpt) 
         
         if args.isPose or args.isShow:
             # estimate pose
@@ -78,6 +79,9 @@ def main(args):
             output.write('%.5f,'%pose[1])
             output.write('%.5f'%pose[2])
             output.close()
+            image_pose = plot_pose_box(image, camera_matrix, kpt)
+            imgdir=save_folder+'/'+name + '.jpg'
+            cv2.imwrite(imgdir,image_pose)
             #np.savetxt(os.path.join(save_folder, name + '_pose.txt'), '%.f,%.f,%.f'%(pose[0],pose[1],pose[2]))
             print pose
         if args.isShow:
@@ -104,7 +108,7 @@ if __name__ == '__main__':
                         help='whether to use opencv')
     parser.add_argument('--is3d', default=True, type=ast.literal_eval,
                         help='whether to output 3D face(.obj)')
-    parser.add_argument('--isKpt', default=False, type=ast.literal_eval,
+    parser.add_argument('--isKpt', default=True, type=ast.literal_eval,
                         help='whether to output key points(.txt)')
     parser.add_argument('--isPose', default=True, type=ast.literal_eval,  
                         help='whether to output estimated pose(.txt)')

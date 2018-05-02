@@ -105,7 +105,8 @@ class PRN:
         src_pts = np.array([[center[0]-size/2, center[1]-size/2], [center[0] - size/2, center[1]+size/2], [center[0]+size/2, center[1]-size/2]])
         DST_PTS = np.array([[0,0], [0,self.resolution_inp - 1], [self.resolution_inp - 1, 0]])
         tform = estimate_transform('similarity', src_pts, DST_PTS)
-        
+        #cropped_image = warp(image, tform.inverse, output_shape=(self.resolution_inp, self.resolution_inp)) 
+        #imsave('cop.jpg',cropped_image)
         image = image/255.
         cropped_image = warp(image, tform.inverse, output_shape=(self.resolution_inp, self.resolution_inp))
 

@@ -63,12 +63,14 @@ def plot_pose_box(image, P, kpt, color=(0, 255, 0), line_width=2):
     point_2d = np.int32(point_2d.reshape(-1, 2))
 
     # Draw all the lines
-    cv2.polylines(image, [point_2d], True, color, line_width, cv2.LINE_AA)
+    color2=(0,0,255)
+    cv2.polylines(image, [point_2d], True, color2, line_width, cv2.LINE_AA)
     cv2.line(image, tuple(point_2d[1]), tuple(
         point_2d[6]), color, line_width, cv2.LINE_AA)
     cv2.line(image, tuple(point_2d[2]), tuple(
         point_2d[7]), color, line_width, cv2.LINE_AA)
     cv2.line(image, tuple(point_2d[3]), tuple(
         point_2d[8]), color, line_width, cv2.LINE_AA)
-
+    cv2.line(image, tuple(point_2d[0]), tuple(
+        point_2d[5]), color, line_width, cv2.LINE_AA)
     return image
